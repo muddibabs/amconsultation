@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AM Consultation — Dermatology & Aesthetic Medicine</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────
+   TOKENS
+───────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:     #faf7f3;
+  --white:  #fffdf9;
+  --card:   #ffffff;
+  --border: #ead9c8;
+  --tan:    #c4905a;
+  --tan-l:  #d4ab80;
+  --tan-d:  #a0723e;
+  --brown:  #3d2010;
+  --text:   #2c1a0e;
+  --muted:  #8a6848;
+  --mu2:    rgba(44,26,14,.45);
+  --shadow: 0 2px 24px rgba(44,26,14,.08);
+  --shadow-h: 0 8px 40px rgba(44,26,14,.13);
+  --r:      12px;
+  --ez:     cubic-bezier(.76,0,.24,1);
+  --ez2:    cubic-bezier(.22,1,.36,1);
+}
+html{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;height:100%;
+  cursor:none;
+  font-weight:300;
+}
+
+/* ─────────────────────────────────────
+   CURSOR — PERMANENT
+───────────────────────────────────── */
+#cur-dot{
+  position:fixed;width:8px;height:8px;
+  background:var(--tan);border-radius:50%;
+  pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:width .18s var(--ez),height .18s var(--ez),background .18s;
+}
+#cur-ring{
+  position:fixed;width:36px;height:36px;
+  border:1.5px solid rgba(196,144,90,.5);border-radius:50%;
+  pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:width .3s var(--ez),height .3s var(--ez),border-color .25s;
+}
+body.ch #cur-dot{width:13px;height:13px;background:var(--tan-l)}
+body.ch #cur-ring{width:54px;height:54px;border-color:rgba(196,144,90,.25)}
+body.cp #cur-dot{width:4px;height:4px}
+body.cp #cur-ring{width:22px;height:22px;border-color:var(--tan)}
+
+/* ─────────────────────────────────────
+   LOADER
+───────────────────────────────────── */
+#loader{
+  position:fixed;inset:0;
+  background:var(--white);
+  z-index:9500;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px;
+  transition:opacity .8s var(--ez),visibility .8s;
+}
+#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.ll{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:400;letter-spacing:6px;
+  color:var(--brown);opacity:0;animation:lup .7s .2s ease forwards;
+}
+.ll em{font-style:italic;color:var(--tan)}
+.lbar-wrap{width:140px;height:1px;background:var(--border);overflow:hidden}
+.lbar-wrap::after{
+  content:'';display:block;height:100%;
+  background:var(--tan);width:0;
+  animation:lbar 1.8s .3s var(--ez) forwards;
+}
+.ltxt{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);opacity:0;animation:lup .6s .5s ease forwards}
+@keyframes lup{to{opacity:1}}
+@keyframes lbar{to{width:100%}}
+
+/* ─────────────────────────────────────
+   CURTAIN TRANSITION
+───────────────────────────────────── */
+#curtain{
+  position:fixed;inset:0;
+  background:var(--brown);
+  z-index:9000;
+  transform:translateY(100%);
+  pointer-events:none;
+}
+#curtain.entering{animation:cIn .5s var(--ez) forwards}
+#curtain.leaving{animation:cOut .5s var(--ez) forwards}
+@keyframes cIn{from{transform:translateY(100%)}to{transform:translateY(0%)}}
+@keyframes cOut{from{transform:translateY(0%)}to{transform:translateY(-100%)}}
+
+/* ─────────────────────────────────────
+   NAV
+───────────────────────────────────── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:800;
+  padding:24px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:padding .4s var(--ez),background .4s,box-shadow .4s;
+}
+#nav.solid{
+  padding:14px 60px;
+  background:rgba(255,253,249,.95);
+  backdrop-filter:blur(20px);
+  box-shadow:0 1px 0 var(--border);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:400;letter-spacing:2px;
+  color:var(--brown);text-decoration:none;cursor:none;
+}
+.nav-logo em{font-style:italic;color:var(--tan);margin-left:3px}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{
+  font-size:12px;letter-spacing:1px;
+  color:var(--muted);text-decoration:none;cursor:none;
+  position:relative;transition:color .22s;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-3px;left:0;
+  width:0;height:1px;background:var(--tan);
+  transition:width .32s var(--ez);
+}
+.nav-links a:hover,.nav-links a.active{color:var(--tan-d)}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-cta{
+  font-size:11px;letter-spacing:1.5px;
+  color:var(--white);background:var(--tan);
+  padding:11px 24px;text-decoration:none;cursor:none;
+  border-radius:40px;
+  position:relative;overflow:hidden;transition:background .3s;border:none;
+}
+.nav-cta:hover{background:var(--tan-d)}
+
+/* ─────────────────────────────────────
+   PAGE SHELL
+───────────────────────────────────── */
+.page{
+  position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;
+  opacity:0;pointer-events:none;transition:opacity .1s;
+}
+.page.active{opacity:1;pointer-events:all}
+.page::-webkit-scrollbar{width:4px}
+.page::-webkit-scrollbar-track{background:var(--bg)}
+.page::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ─────────────────────────────────────
+   SHARED
+───────────────────────────────────── */
+.sec{padding:100px 60px;text-align:center}
+.wrap{max-width:1100px;margin:0 auto}
+.wrap-sm{max-width:680px;margin:0 auto}
+.wrap-md{max-width:860px;margin:0 auto}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:12px;
+  margin-bottom:14px;
+}
+.eyebrow-line{width:22px;height:1px;background:var(--tan)}
+.eyebrow span{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--tan)}
+.s-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,60px);font-weight:400;
+  color:var(--brown);line-height:1.1;
+}
+.s-title em{font-style:italic;color:var(--tan)}
+.s-sub{
+  font-size:15px;line-height:1.85;color:var(--muted);
+  max-width:520px;margin:18px auto 0;
+}
+
+/* ─────────────────────────────────────
+   REVEAL
+───────────────────────────────────── */
+.rev{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ez),transform .8s var(--ez)}
+.rev.in{opacity:1;transform:translateY(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+/* ─────────────────────────────────────
+   BUTTONS
+───────────────────────────────────── */
+.btn-fill{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:15px 36px;border-radius:40px;
+  background:var(--tan);color:var(--white);
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;letter-spacing:1px;
+  text-decoration:none;cursor:none;border:none;
+  transition:background .3s,transform .2s;
+}
+.btn-fill:hover{background:var(--tan-d);transform:translateY(-1px)}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:14px 36px;border-radius:40px;
+  border:1.5px solid var(--tan);color:var(--tan-d);
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;letter-spacing:1px;
+  text-decoration:none;cursor:none;background:transparent;
+  transition:background .3s,color .3s,transform .2s;
+}
+.btn-outline:hover{background:var(--tan);color:var(--white);transform:translateY(-1px)}
+
+/* ─────────────────────────────────────
+   FOOTER
+───────────────────────────────────── */
+footer{
+  background:var(--brown);
+  color:rgba(255,253,249,.55);
+  padding:64px 60px 36px;
+  text-align:center;
+}
+.ft-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:400;color:var(--white);
+  letter-spacing:2px;margin-bottom:12px;
+}
+.ft-logo em{font-style:italic;color:var(--tan-l)}
+.ft-tag{font-size:13px;line-height:1.8;max-width:360px;margin:0 auto 40px}
+.ft-links{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:40px;list-style:none}
+.ft-links a{
+  font-size:12px;letter-spacing:.5px;
+  color:rgba(255,253,249,.45);text-decoration:none;cursor:none;
+  transition:color .22s;
+}
+.ft-links a:hover{color:var(--tan-l)}
+.ft-copy{font-size:11px;color:rgba(255,253,249,.2);border-top:1px solid rgba(255,253,249,.1);padding-top:24px;margin-top:0}
+
+/* ════════════════════════════════════
+   PAGE: HOME
+════════════════════════════════════ */
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  position:relative;overflow:hidden;
+  padding:120px 60px 80px;
+  background:linear-gradient(175deg,var(--white) 0%,var(--bg) 60%,#f0e6d6 100%);
+}
+#pcanvas{position:absolute;inset:0;pointer-events:none;opacity:.6}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(196,144,90,.1);border:1px solid rgba(196,144,90,.25);
+  border-radius:40px;padding:7px 18px;
+  font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--tan-d);margin-bottom:28px;
+  opacity:0;animation:su .8s .3s var(--ez) forwards;
+}
+.hero-badge::before{content:'✦';font-size:8px}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(52px,8vw,96px);font-weight:300;
+  color:var(--brown);line-height:1.0;
+  margin-bottom:24px;
+  opacity:0;animation:su .9s .45s var(--ez) forwards;
+}
+.hero-title em{font-style:italic;color:var(--tan);display:block}
+.hero-sub{
+  font-size:16px;line-height:1.85;color:var(--muted);
+  max-width:500px;margin:0 auto 44px;
+  opacity:0;animation:su .9s .6s var(--ez) forwards;
+}
+.hero-acts{
+  display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;
+  opacity:0;animation:su .9s .75s var(--ez) forwards;
+}
+.hero-stats{
+  display:flex;justify-content:center;gap:56px;flex-wrap:wrap;
+  margin-top:72px;
+  opacity:0;animation:su .9s .9s var(--ez) forwards;
+}
+.hstat{text-align:center}
+.hstat-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:40px;font-weight:300;color:var(--tan);line-height:1;
+}
+.hstat-l{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+/* Scroll hint */
+.h-scroll{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  opacity:0;animation:fi .8s 1.1s ease forwards;
+}
+.scroll-track{width:1px;height:52px;background:var(--border);position:relative;overflow:hidden}
+.scroll-track::after{content:'';position:absolute;top:-30%;left:0;right:0;height:30%;background:var(--tan);animation:sd 2s ease-in-out infinite}
+@keyframes sd{0%{top:-30%}100%{top:130%}}
+.scroll-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+@keyframes su{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fi{to{opacity:1}}
+
+/* MARQUEE */
+.mstrip{
+  overflow:hidden;padding:20px 0;
+  background:var(--white);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.minner{display:flex;animation:mr 26s linear infinite;width:max-content}
+.mitem{display:flex;align-items:center;gap:28px;padding:0 28px;flex-shrink:0;white-space:nowrap}
+.mitem span{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--muted);letter-spacing:.5px}
+.mdot{width:4px;height:4px;border-radius:50%;background:var(--tan)}
+@keyframes mr{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* HOME SERVICES GRID */
+.home-srv-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;margin-top:56px;text-align:left;
+}
+.hsc{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:36px 30px;
+  cursor:none;position:relative;overflow:hidden;
+  transition:transform .35s var(--ez),box-shadow .35s var(--ez);
+}
+.hsc:hover{transform:translateY(-4px);box-shadow:var(--shadow-h)}
+.hsc-num{font-size:10px;letter-spacing:2px;color:var(--tan);margin-bottom:16px}
+.hsc-icon{font-size:28px;margin-bottom:14px;display:block}
+.hsc-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:500;color:var(--brown);margin-bottom:10px;
+}
+.hsc-text{font-size:13px;line-height:1.75;color:var(--muted)}
+.hsc-link{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:18px;font-size:11px;letter-spacing:1px;
+  color:var(--tan);cursor:none;transition:gap .25s;
+}
+.hsc:hover .hsc-link{gap:14px}
+
+/* HOME PROCESS */
+.process-row{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:20px;margin-top:56px;
+}
+.pr{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:32px 24px;text-align:center;
+  transition:transform .3s var(--ez),box-shadow .3s;
+}
+.pr:hover{transform:translateY(-3px);box-shadow:var(--shadow-h)}
+.pr-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:44px;font-weight:300;color:var(--border);line-height:1;margin-bottom:14px;
+}
+.pr-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--brown);margin-bottom:8px}
+.pr-desc{font-size:12px;line-height:1.75;color:var(--muted)}
+
+/* TESTIMONIALS */
+.twrap{
+  overflow:hidden;padding:70px 0;
+  background:var(--white);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.twrap::before,.twrap::after{content:'';position:absolute;top:0;bottom:0;width:160px;z-index:2;pointer-events:none}
+.twrap::before{left:0;background:linear-gradient(90deg,var(--white),transparent)}
+.twrap::after{right:0;background:linear-gradient(-90deg,var(--white),transparent)}
+.ttrack{display:flex;gap:24px;animation:ts 40s linear infinite;width:max-content}
+.ttrack:hover{animation-play-state:paused}
+.tc{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r);padding:32px 36px;min-width:340px;flex-shrink:0;
+}
+.t-stars{color:var(--tan);font-size:12px;letter-spacing:2px;margin-bottom:14px}
+.t-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;font-style:italic;font-weight:400;
+  line-height:1.65;color:var(--brown);margin-bottom:20px;
+}
+.t-by{font-size:11px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+@keyframes ts{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* HOME CTA BAND */
+.home-cta{
+  padding:100px 60px;
+  background:var(--brown);
+  text-align:center;
+}
+.home-cta h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,60px);font-weight:300;
+  color:var(--white);margin-bottom:20px;
+}
+.home-cta h2 em{font-style:italic;color:var(--tan-l)}
+.home-cta p{font-size:15px;color:rgba(255,253,249,.55);max-width:440px;margin:0 auto 40px;line-height:1.8}
+.btn-fill-light{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:15px 36px;border-radius:40px;
+  background:var(--tan-l);color:var(--brown);
+  font-size:12px;letter-spacing:1px;
+  text-decoration:none;cursor:none;border:none;
+  transition:background .3s,transform .2s;
+}
+.btn-fill-light:hover{background:var(--white);transform:translateY(-1px)}
+.btn-outline-light{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:14px 36px;border-radius:40px;
+  border:1.5px solid rgba(255,253,249,.3);color:rgba(255,253,249,.7);
+  font-size:12px;letter-spacing:1px;
+  text-decoration:none;cursor:none;background:transparent;
+  transition:border-color .3s,color .3s,transform .2s;
+}
+.btn-outline-light:hover{border-color:var(--tan-l);color:var(--tan-l);transform:translateY(-1px)}
+
+/* ════════════════════════════════════
+   PAGE: SERVICES
+════════════════════════════════════ */
+.page-hero{
+  padding:140px 60px 80px;
+  text-align:center;
+  background:linear-gradient(175deg,var(--white) 0%,var(--bg) 100%);
+  border-bottom:1px solid var(--border);
+}
+.srv-full-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;padding:70px 60px;
+  max-width:1200px;margin:0 auto;
+}
+.scard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:40px 34px;
+  cursor:none;text-align:left;
+  transition:transform .35s var(--ez),box-shadow .35s;
+}
+.scard:hover{transform:translateY(-5px);box-shadow:var(--shadow-h)}
+.scard-num{font-size:10px;letter-spacing:2px;color:var(--tan);margin-bottom:18px}
+.scard-icon{font-size:32px;margin-bottom:16px;display:block}
+.scard-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:23px;font-weight:500;color:var(--brown);margin-bottom:12px;
+}
+.scard-desc{font-size:13px;line-height:1.8;color:var(--muted);margin-bottom:20px}
+.scard-list{list-style:none;margin-bottom:24px}
+.scard-list li{
+  font-size:12px;color:var(--muted);
+  padding:7px 0;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.scard-list li::before{content:'✦';color:var(--tan);font-size:7px;flex-shrink:0}
+.scard-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:1px;color:var(--tan);cursor:none;
+  transition:gap .25s;
+}
+.scard:hover .scard-cta{gap:14px}
+
+/* ════════════════════════════════════
+   PAGE: DOCTORS
+════════════════════════════════════ */
+.doc-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;padding:70px 60px;
+  max-width:1200px;margin:0 auto;
+}
+.dcard{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;cursor:none;
+  transition:transform .35s var(--ez),box-shadow .35s;
+  text-align:center;
+}
+.dcard:hover{transform:translateY(-4px);box-shadow:var(--shadow-h)}
+.dphoto{
+  aspect-ratio:1/1;
+  background:linear-gradient(145deg,#f5e6d2 0%,#ead2b8 100%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;
+  position:relative;overflow:hidden;
+}
+.dav{font-size:56px;transition:transform .4s var(--ez)}
+.dcard:hover .dav{transform:scale(1.06)}
+.dph-name{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--muted)}
+.dbio-overlay{
+  position:absolute;inset:0;
+  background:rgba(61,32,16,.92);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;transition:opacity .4s var(--ez);
+}
+.dcard:hover .dbio-overlay{opacity:1}
+.dbio{font-size:13px;line-height:1.75;color:rgba(255,253,249,.8);text-align:center}
+.dinfo{padding:24px 24px 28px}
+.dname{
+  font-family:'Cormorant Garamond',serif;
+  font-size:21px;font-weight:500;color:var(--brown);margin-bottom:4px;
+}
+.drole{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--tan);margin-bottom:10px}
+.dcred{font-size:12px;color:var(--muted);line-height:1.5}
+
+.doc-philosophy{
+  padding:80px 60px;
+  background:var(--white);border-top:1px solid var(--border);
+  text-align:center;
+}
+.doc-philosophy blockquote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(24px,3.5vw,40px);font-weight:300;font-style:italic;
+  color:var(--brown);line-height:1.45;
+  max-width:700px;margin:0 auto 40px;
+}
+.doc-philosophy blockquote em{color:var(--tan)}
+.doc-stats{display:flex;justify-content:center;gap:56px;flex-wrap:wrap;margin-top:48px}
+.ds-n{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;color:var(--tan)}
+.ds-l{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+/* ════════════════════════════════════
+   PAGE: PRICING
+════════════════════════════════════ */
+.price-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:20px;padding:0 60px 80px;
+  max-width:1100px;margin:0 auto;
+}
+.pc{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:44px 36px;
+  text-align:center;cursor:none;
+  position:relative;overflow:hidden;
+  transition:transform .35s var(--ez),box-shadow .35s;
+}
+.pc:hover{transform:translateY(-4px);box-shadow:var(--shadow-h)}
+.pc.feat{
+  background:var(--brown);
+  border-color:var(--brown);
+}
+.pc.feat .pc-tier,.pc.feat .pc-per,.pc.feat .pc-feats li{color:rgba(255,253,249,.55)}
+.pc.feat .pc-price,.pc.feat .pc-feats li::before{color:var(--tan-l)}
+.pc.feat .pc-feats li.off{color:rgba(255,253,249,.2)}
+.pc-badge{
+  position:absolute;top:18px;right:18px;
+  background:var(--tan-l);color:var(--brown);
+  font-size:8px;font-weight:500;letter-spacing:2px;
+  padding:5px 12px;border-radius:20px;text-transform:uppercase;
+}
+.pc-tier{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--tan);margin-bottom:28px}
+.pc-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:52px;font-weight:300;color:var(--brown);line-height:1;margin-bottom:4px;
+}
+.pc-price sup{font-size:18px;vertical-align:super;color:var(--tan)}
+.pc-per{font-size:11px;color:var(--muted);margin-bottom:32px}
+.pc-div{height:1px;background:var(--border);margin-bottom:28px}
+.pc.feat .pc-div{background:rgba(255,253,249,.12)}
+.pc-feats{list-style:none;margin-bottom:36px;text-align:left}
+.pc-feats li{
+  font-size:13px;color:var(--muted);
+  padding:9px 0;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.pc.feat .pc-feats li{border-color:rgba(255,253,249,.08)}
+.pc-feats li::before{content:'✦';color:var(--tan);font-size:7px;flex-shrink:0}
+.pc-feats li.off{color:rgba(44,26,14,.25);text-decoration:line-through}
+.pc-feats li.off::before{color:rgba(196,144,90,.2)}
+
+.faq-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:16px;padding:0 60px 100px;
+  max-width:1100px;margin:0 auto;
+}
+.faq-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r);padding:28px 32px;cursor:none;
+  transition:border-color .25s,box-shadow .25s;
+}
+.faq-item:hover{border-color:var(--tan);box-shadow:var(--shadow)}
+.faq-q{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:500;color:var(--brown);margin-bottom:10px;
+}
+.faq-a{font-size:13px;line-height:1.8;color:var(--muted)}
+
+/* ════════════════════════════════════
+   PAGE: BOOK / CONTACT
+════════════════════════════════════ */
+.book-layout{
+  display:grid;grid-template-columns:1fr 1.2fr;
+  gap:60px;align-items:start;
+  padding:0 60px 100px;
+  max-width:1100px;margin:0 auto;
+  text-align:left;
+}
+.book-info .s-title{text-align:left}
+.book-info .eyebrow{display:flex}
+.bi-p{font-size:14px;line-height:1.9;color:var(--muted);margin:20px 0 36px}
+.ci-list{display:flex;flex-direction:column;gap:20px}
+.ci{display:flex;gap:16px;align-items:flex-start}
+.ci-icon{
+  width:44px;height:44px;flex-shrink:0;
+  background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  transition:border-color .25s;
+}
+.ci:hover .ci-icon{border-color:var(--tan)}
+.ci-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tan);margin-bottom:4px}
+.ci-val{font-size:14px;color:var(--muted)}
+
+.bform{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:40px;
+}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.fg input,.fg select,.fg textarea{
+  width:100%;padding:14px 16px;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;
+  outline:none;transition:border-color .22s;appearance:none;
+}
+.fg input::placeholder,.fg textarea::placeholder{color:rgba(44,26,14,.3)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--tan)}
+.fg select{
+  cursor:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c4905a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  background-color:var(--bg);
+}
+.fg select option{background:var(--white)}
+.fg textarea{resize:vertical;min-height:100px}
+.btn-submit-form{
+  width:100%;padding:16px;border-radius:40px;
+  background:var(--tan);color:var(--white);
+  border:none;cursor:none;
+  font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:1.5px;
+  text-transform:uppercase;
+  transition:background .3s;
+}
+.btn-submit-form:hover{background:var(--tan-d)}
+
+/* ════════════════════════════════════
+   PAGE: INTAKE FORM (jsPDF)
+════════════════════════════════════ */
+#p-form .page-hero{padding-bottom:60px}
+.form-shell{
+  max-width:720px;margin:0 auto;
+  padding:0 60px 100px;
+}
+
+/* Progress */
+.prog-wrap{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:28px 0 8px;
+  flex-wrap:wrap;
+}
+.prog-step{
+  width:32px;height:4px;border-radius:2px;
+  background:var(--border);
+  transition:background .4s,width .3s;
+}
+.prog-step.done{background:var(--tan-l)}
+.prog-step.active{background:var(--tan);width:52px}
+.prog-label{
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);margin-top:10px;text-align:center;display:block;
+}
+
+/* Form sections */
+.fsec{display:none}
+.fsec.active{display:block}
+.fsec-hdr{text-align:center;padding:36px 0 32px}
+.fsec-num{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--tan);margin-bottom:8px}
+.fsec-hdr h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:400;color:var(--brown);margin-bottom:8px;
+}
+.fsec-hdr p{font-size:14px;color:var(--muted)}
+
+/* Form fields */
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.fgroup{margin-bottom:14px}
+.fgroup label{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.req{color:var(--tan)}
+.opt{color:var(--muted);font-size:9px;text-transform:lowercase;letter-spacing:.5px}
+.fgroup input[type=text],.fgroup input[type=date],.fgroup input[type=tel],.fgroup input[type=email],.fgroup select,.fgroup textarea{
+  width:100%;padding:13px 15px;
+  background:var(--white);border:1.5px solid var(--border);border-radius:10px;
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;
+  outline:none;transition:border-color .22s;appearance:none;
+}
+.fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{border-color:var(--tan)}
+.fgroup input::placeholder,.fgroup textarea::placeholder{color:rgba(44,26,14,.25)}
+.fgroup select{
+  cursor:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c4905a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  background-color:var(--white);
+}
+.fgroup select option{background:var(--white)}
+.fgroup textarea{resize:vertical;min-height:90px}
+
+/* Radio pills */
+.rpill-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.rpill{
+  padding:9px 18px;border-radius:30px;
+  border:1.5px solid var(--border);
+  font-size:13px;color:var(--muted);cursor:none;
+  transition:border-color .2s,background .2s,color .2s;
+  user-select:none;
+}
+.rpill input{display:none}
+.rpill.selected{background:var(--tan);border-color:var(--tan);color:var(--white)}
+
+/* Check grid */
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.ci-check{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:10px;
+  border:1.5px solid var(--border);cursor:none;
+  transition:border-color .2s,background .2s;user-select:none;
+}
+.ci-check input{display:none}
+.ci-check.checked{background:rgba(196,144,90,.1);border-color:var(--tan)}
+.ci-check .cb{
+  width:16px;height:16px;border-radius:4px;
+  border:1.5px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,border-color .2s;font-size:10px;
+}
+.ci-check.checked .cb{background:var(--tan);border-color:var(--tan);color:white}
+.ci-check .cb::after{content:'';display:none}
+.ci-check.checked .cb::after{content:'✓';display:block}
+.ci-check .cl{font-size:12px;color:var(--muted)}
+.ci-check.checked .cl{color:var(--tan-d)}
+
+/* Conditional */
+.cond{display:none;margin-top:14px;padding:20px;background:var(--bg);border-radius:10px;border:1px solid var(--border)}
+.cond.show{display:block}
+.cond label{display:block;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.cond input,.cond textarea{
+  width:100%;padding:12px 14px;
+  background:var(--white);border:1.5px solid var(--border);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;
+  transition:border-color .2s;
+}
+.cond input:focus,.cond textarea:focus{border-color:var(--tan)}
+.cond textarea{resize:vertical;min-height:72px}
+
+/* Upload zone */
+.note{
+  background:rgba(196,144,90,.08);border:1px solid rgba(196,144,90,.2);
+  border-radius:10px;padding:14px 18px;font-size:13px;color:var(--tan-d);
+  margin-bottom:20px;text-align:center;
+}
+.uz{
+  border:2px dashed var(--border);border-radius:12px;
+  padding:32px;text-align:center;cursor:none;
+  transition:border-color .25s,background .25s;
+  position:relative;
+}
+.uz:hover{border-color:var(--tan);background:rgba(196,144,90,.04)}
+.uz input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:none;pointer-events:none;
+}
+.uz-icon{font-size:28px;margin-bottom:10px}
+.uz h3{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--brown);margin-bottom:4px}
+.uz p{font-size:12px;color:var(--muted)}
+.prev-wrap{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.prev-img{width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--border)}
+
+/* Consent */
+.consent-item{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:18px;border:1.5px solid var(--border);border-radius:12px;
+  margin-bottom:12px;cursor:none;
+  transition:border-color .22s,background .22s;user-select:none;
+}
+.consent-item.checked{border-color:var(--tan);background:rgba(196,144,90,.06)}
+.consent-box{
+  width:20px;height:20px;border-radius:6px;
+  border:1.5px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s,border-color .2s;margin-top:2px;
+}
+.consent-item.checked .consent-box{background:var(--tan);border-color:var(--tan);color:white;font-size:11px}
+.consent-text strong{display:block;font-size:14px;color:var(--brown);margin-bottom:4px}
+.consent-text{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* Form nav */
+.fnav{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:24px;border-top:1px solid var(--border)}
+.btn-fnav-back{
+  padding:12px 28px;border-radius:30px;
+  border:1.5px solid var(--border);color:var(--muted);
+  font-size:12px;cursor:none;background:transparent;
+  transition:border-color .2s,color .2s;
+}
+.btn-fnav-back:hover{border-color:var(--tan);color:var(--tan)}
+.btn-fnav-next{
+  padding:12px 32px;border-radius:30px;
+  background:var(--tan);color:white;
+  font-size:12px;cursor:none;border:none;
+  transition:background .25s;
+}
+.btn-fnav-next:hover{background:var(--tan-d)}
+.btn-fsub{
+  padding:14px 40px;border-radius:30px;
+  background:var(--brown);color:white;
+  font-size:12px;cursor:none;border:none;
+  transition:background .25s;
+}
+.btn-fsub:hover{background:var(--tan)}
+
+/* Success */
+.fsuccess{
+  display:none;text-align:center;
+  padding:60px 0;
+}
+.fsuccess.show{display:block}
+.succ-icon{font-size:56px;margin-bottom:20px}
+.fsuccess h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:38px;font-weight:400;color:var(--brown);margin-bottom:14px;
+}
+.fsuccess p{font-size:15px;color:var(--muted);line-height:1.8;max-width:440px;margin:0 auto 10px}
+.voucher-box{
+  max-width:400px;margin:32px auto 0;
+  background:linear-gradient(135deg,var(--brown) 0%,#5c3820 100%);
+  border-radius:16px;padding:32px;text-align:center;
+}
+.v-tag{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--tan-l);margin-bottom:10px}
+.v-amt{
+  font-family:'Cormorant Garamond',serif;
+  font-size:44px;font-weight:300;color:white;margin-bottom:4px;
+}
+.v-desc{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:16px}
+.v-code{
+  background:rgba(255,255,255,.1);border-radius:8px;
+  padding:11px 16px;font-family:monospace;
+  font-size:18px;letter-spacing:3px;color:var(--tan-l);
+}
+.v-exp{font-size:11px;color:rgba(255,255,255,.3);margin-top:10px}
+
+/* ─────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────── */
+@media(max-width:900px){
+  #nav{padding:18px 24px}
+  #nav.solid{padding:12px 24px}
+  .nav-links{display:none}
+  .hero,.sec{padding-left:24px;padding-right:24px}
+  .home-srv-grid,.srv-full-grid,.doc-grid{grid-template-columns:1fr;padding:40px 24px}
+  .process-row{grid-template-columns:1fr 1fr;padding:0 24px}
+  .price-grid,.faq-grid{grid-template-columns:1fr;padding:0 24px 60px}
+  .book-layout{grid-template-columns:1fr;padding:0 24px 80px}
+  .form-shell{padding:0 24px 80px}
+  .frow,.cg{grid-template-columns:1fr}
+  .fr{grid-template-columns:1fr}
+  .page-hero{padding:120px 24px 60px}
+  .doc-philosophy{padding:60px 24px}
+  .home-cta{padding:80px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="ll">AM <em>Consultation</em></div>
+  <div class="lbar-wrap"></div>
+  <div class="ltxt">Loading your experience</div>
+</div>
+
+<!-- Curtain -->
+<div id="curtain"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#home" class="nav-logo" data-page="home">AM <em>Consultation</em></a>
+  <ul class="nav-links">
+    <li><a href="#services" data-page="services">Services</a></li>
+    <li><a href="#doctors" data-page="doctors">Our Doctors</a></li>
+    <li><a href="#pricing" data-page="pricing">Pricing</a></li>
+    <li><a href="#book" data-page="book">Contact</a></li>
+    <li><a href="#form" data-page="form">Intake Form</a></li>
+  </ul>
+  <a href="#book" class="nav-cta" data-page="book">Book Now</a>
+</nav>
+
+<!-- ═══════ PAGE: HOME ═══════ -->
+<div class="page active" id="p-home">
+  <!-- Hero -->
+  <section class="hero">
+    <canvas id="pcanvas"></canvas>
+    <div>
+      <div class="hero-badge">Premium Online Dermatology</div>
+      <h1 class="hero-title">Skin Care,<br>Done <em>Right.</em></h1>
+      <p class="hero-sub">Pakistan's most trusted online dermatology and aesthetic medicine consultancy — expert care on your schedule, wherever you are.</p>
+      <div class="hero-acts">
+        <a href="#book" class="btn-fill" data-page="book">Book a Consultation</a>
+        <a href="#form" class="btn-outline" data-page="form">Fill Intake Form</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-n" data-count="500">0</div><div class="hstat-l">Patients Treated</div></div>
+        <div class="hstat"><div class="hstat-n" data-count="6">0</div><div class="hstat-l">Specialists</div></div>
+        <div class="hstat"><div class="hstat-n" data-count="24">0</div><div class="hstat-l">Hr Response</div></div>
+      </div>
+    </div>
+    <div class="h-scroll"><div class="scroll-track"></div><span class="scroll-lbl">Scroll</span></div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="mstrip">
+    <div class="minner">
+      <div class="mitem"><span>General Dermatology</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Aesthetic Medicine</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Hair & Scalp</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Chemical Peels</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Botox & Fillers</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Anti-Ageing</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Skincare Prescriptions</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Acne Treatment</span><div class="mdot"></div></div>
+      <div class="mitem"><span>General Dermatology</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Aesthetic Medicine</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Hair & Scalp</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Chemical Peels</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Botox & Fillers</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Anti-Ageing</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Skincare Prescriptions</span><div class="mdot"></div></div>
+      <div class="mitem"><span>Acne Treatment</span><div class="mdot"></div></div>
+    </div>
+  </div>
+
+  <!-- Services preview -->
+  <section class="sec" style="background:var(--white)">
+    <div class="wrap">
+      <div class="eyebrow rev"><div class="eyebrow-line"></div><span>What We Treat</span></div>
+      <h2 class="s-title rev d1">Our <em>Specialities</em></h2>
+      <p class="s-sub rev d2">Comprehensive care across dermatology and aesthetics, delivered by board-certified specialists.</p>
+      <div class="home-srv-grid">
+        <div class="hsc rev" data-page="services">
+          <div class="hsc-num">01</div>
+          <span class="hsc-icon">🔬</span>
+          <div class="hsc-name">General Dermatology</div>
+          <p class="hsc-text">Acne, eczema, psoriasis, rosacea and all skin conditions diagnosed and managed by certified dermatologists.</p>
+          <span class="hsc-link" data-page="services">Learn more →</span>
+        </div>
+        <div class="hsc rev d1" data-page="services">
+          <div class="hsc-num">02</div>
+          <span class="hsc-icon">✨</span>
+          <div class="hsc-name">Aesthetic Medicine</div>
+          <p class="hsc-text">Botox, fillers, chemical peels and aesthetic consultations tailored to enhance your natural beauty.</p>
+          <span class="hsc-link" data-page="services">Learn more →</span>
+        </div>
+        <div class="hsc rev d2" data-page="services">
+          <div class="hsc-num">03</div>
+          <span class="hsc-icon">💆</span>
+          <div class="hsc-name">Hair & Scalp</div>
+          <p class="hsc-text">Comprehensive hair loss assessment, alopecia treatment and scalp care from specialist trichologists.</p>
+          <span class="hsc-link" data-page="services">Learn more →</span>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:40px" class="rev d2">
+        <a href="#services" class="btn-outline" data-page="services">View All Services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="sec" style="background:var(--bg)">
+    <div class="wrap">
+      <div class="eyebrow rev"><div class="eyebrow-line"></div><span>How It Works</span></div>
+      <h2 class="s-title rev d1">Four Simple <em>Steps</em></h2>
+      <p class="s-sub rev d2">Getting expert dermatology care has never been this easy.</p>
+      <div class="process-row">
+        <div class="pr rev"><div class="pr-n">01</div><div class="pr-title">Fill Your Form</div><p class="pr-desc">Complete our detailed medical questionnaire and upload photos of your concern in under 10 minutes.</p></div>
+        <div class="pr rev d1"><div class="pr-n">02</div><div class="pr-title">Doctor Reviews</div><p class="pr-desc">A specialist carefully reviews your history, photos and concerns within 24 hours.</p></div>
+        <div class="pr rev d2"><div class="pr-n">03</div><div class="pr-title">Receive Your Plan</div><p class="pr-desc">Get a comprehensive report with diagnosis, recommendations and a tailored skincare plan.</p></div>
+        <div class="pr rev d3"><div class="pr-n">04</div><div class="pr-title">Follow Up</div><p class="pr-desc">Your doctor monitors your progress and refines your plan for the best possible results.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <div class="twrap">
+    <div class="ttrack">
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"Finally a dermatologist who truly listens. My skin transformed completely within 6 weeks."</p><div class="t-by">Fatima K. — Karachi</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"Expert advice without leaving home. The convenience is absolutely unmatched."</p><div class="t-by">Sara M. — Lahore</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"The personalised skincare regimen was a complete game changer for my confidence."</p><div class="t-by">Nadia A. — Islamabad</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"Professional, thorough and responsive. I recommend AM Consultation to everyone."</p><div class="t-by">Zara H. — Dubai</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"The aesthetic consultation was incredibly detailed. I felt genuinely heard."</p><div class="t-by">Maryam R. — Karachi</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"Finally a dermatologist who truly listens. My skin transformed completely within 6 weeks."</p><div class="t-by">Fatima K. — Karachi</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"Expert advice without leaving home. The convenience is absolutely unmatched."</p><div class="t-by">Sara M. — Lahore</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"The personalised skincare regimen was a complete game changer for my confidence."</p><div class="t-by">Nadia A. — Islamabad</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"Professional, thorough and responsive. I recommend AM Consultation to everyone."</p><div class="t-by">Zara H. — Dubai</div></div>
+      <div class="tc"><div class="t-stars">★★★★★</div><p class="t-text">"The aesthetic consultation was incredibly detailed. I felt genuinely heard."</p><div class="t-by">Maryam R. — Karachi</div></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="home-cta">
+    <h2 class="rev">Ready to Begin Your <em>Skin Journey?</em></h2>
+    <p class="rev d1">Take the first step towards healthier, more radiant skin. Our specialists are available 7 days a week.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap" class="rev d2">
+      <a href="#book" class="btn-fill-light" data-page="book">Book a Consultation</a>
+      <a href="#form" class="btn-outline-light" data-page="form">Fill Intake Form</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="ft-logo">AM <em>Consultation</em></div>
+    <p class="ft-tag">Pakistan's most trusted online dermatology and aesthetic medicine consultancy.</p>
+    <ul class="ft-links">
+      <li><a href="#home" data-page="home">Home</a></li>
+      <li><a href="#services" data-page="services">Services</a></li>
+      <li><a href="#doctors" data-page="doctors">Doctors</a></li>
+      <li><a href="#pricing" data-page="pricing">Pricing</a></li>
+      <li><a href="#book" data-page="book">Contact</a></li>
+      <li><a href="#form" data-page="form">Intake Form</a></li>
+    </ul>
+    <p class="ft-copy">© 2026 AM Consultation. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════ PAGE: SERVICES ═══════ -->
+<div class="page" id="p-services">
+  <div class="page-hero">
+    <div class="eyebrow rev" style="justify-content:center"><div class="eyebrow-line"></div><span>What We Offer</span></div>
+    <h1 class="s-title rev d1">Our <em>Services</em></h1>
+    <p class="s-sub rev d2">Comprehensive dermatology and aesthetic care, delivered by Pakistan's leading specialists.</p>
+  </div>
+  <div class="srv-full-grid">
+    <div class="scard rev"><div class="scard-num">01</div><span class="scard-icon">🔬</span><h3 class="scard-name">General Dermatology</h3><p class="scard-desc">Acne, eczema, psoriasis, rosacea and all skin conditions — diagnosed and managed by board-certified dermatologists specialising in South Asian skin.</p><ul class="scard-list"><li>Acne & breakouts</li><li>Eczema & psoriasis</li><li>Rosacea & rashes</li><li>Skin infections</li><li>Pigmentation disorders</li></ul><a href="#book" class="scard-cta" data-page="book">Book now →</a></div>
+    <div class="scard rev d1"><div class="scard-num">02</div><span class="scard-icon">✨</span><h3 class="scard-name">Aesthetic Medicine</h3><p class="scard-desc">Botox, dermal fillers, chemical peels and advanced aesthetic consultations — tailored to enhance your natural beauty with clinical precision.</p><ul class="scard-list"><li>Botox & Dysport</li><li>Dermal fillers</li><li>Chemical peels</li><li>Skin rejuvenation</li><li>Facial contouring</li></ul><a href="#book" class="scard-cta" data-page="book">Book now →</a></div>
+    <div class="scard rev d2"><div class="scard-num">03</div><span class="scard-icon">🧴</span><h3 class="scard-name">Skincare Prescriptions</h3><p class="scard-desc">Personalised, evidence-based skincare regimens and prescription treatments formulated specifically for your skin type and concerns.</p><ul class="scard-list"><li>Custom regimen design</li><li>Prescription actives</li><li>Ingredient guidance</li><li>Routine optimisation</li><li>Seasonal adaptation</li></ul><a href="#book" class="scard-cta" data-page="book">Book now →</a></div>
+    <div class="scard rev"><div class="scard-num">04</div><span class="scard-icon">💆</span><h3 class="scard-name">Hair & Scalp</h3><p class="scard-desc">Comprehensive hair loss assessment, alopecia treatment and PRP therapy consultation from specialist trichologists.</p><ul class="scard-list"><li>Alopecia & hair loss</li><li>Scalp psoriasis</li><li>Dandruff & seborrhea</li><li>PRP consultation</li><li>Hair regrowth plans</li></ul><a href="#book" class="scard-cta" data-page="book">Book now →</a></div>
+    <div class="scard rev d1"><div class="scard-num">05</div><span class="scard-icon">🛡️</span><h3 class="scard-name">Anti-Ageing</h3><p class="scard-desc">Preventative and corrective anti-ageing treatments including collagen induction, skin rejuvenation and long-term skin health planning.</p><ul class="scard-list"><li>Preventative planning</li><li>Collagen induction</li><li>Skin texture refinement</li><li>Antioxidant protocols</li><li>Long-term monitoring</li></ul><a href="#book" class="scard-cta" data-page="book">Book now →</a></div>
+    <div class="scard rev d2"><div class="scard-num">06</div><span class="scard-icon">📋</span><h3 class="scard-name">Follow-Up Care</h3><p class="scard-desc">Ongoing monitoring, treatment adjustment and dedicated follow-up consultations to ensure your skin continues to thrive.</p><ul class="scard-list"><li>Progress monitoring</li><li>Treatment adjustment</li><li>Prescription renewal</li><li>Seasonal updates</li><li>Long-term strategy</li></ul><a href="#book" class="scard-cta" data-page="book">Book now →</a></div>
+  </div>
+  <div class="sec" style="background:var(--white);padding-top:0">
+    <a href="#form" class="btn-fill" data-page="form">Fill Your Intake Form</a>
+  </div>
+  <footer>
+    <div class="ft-logo">AM <em>Consultation</em></div>
+    <p class="ft-tag">Pakistan's most trusted online dermatology consultancy.</p>
+    <ul class="ft-links"><li><a href="#home" data-page="home">Home</a></li><li><a href="#doctors" data-page="doctors">Doctors</a></li><li><a href="#pricing" data-page="pricing">Pricing</a></li><li><a href="#book" data-page="book">Book</a></li></ul>
+    <p class="ft-copy">© 2026 AM Consultation. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════ PAGE: DOCTORS ═══════ -->
+<div class="page" id="p-doctors">
+  <div class="page-hero">
+    <div class="eyebrow rev" style="justify-content:center"><div class="eyebrow-line"></div><span>Our Specialists</span></div>
+    <h1 class="s-title rev d1">Meet the <em>Doctors</em></h1>
+    <p class="s-sub rev d2">Board-certified dermatologists and aesthetic physicians with decades of combined experience and a deep passion for skin health.</p>
+  </div>
+  <div class="doc-grid">
+    <div class="dcard rev"><div class="dphoto"><div class="dav">👩‍⚕️</div><div class="dph-name">Dr. Ayesha Mirza</div><div class="dbio-overlay"><p class="dbio">Specialises in medical and cosmetic dermatology with a focus on South Asian skin types, pigmentation disorders and complex acne management. Trained in London and Karachi.</p></div></div><div class="dinfo"><h3 class="dname">Dr. Ayesha Mirza</h3><div class="drole">Lead Dermatologist</div><div class="dcred">MBBS · FCPS Dermatology · 12 years exp<br>Pigmentation, acne, South Asian skin</div></div></div>
+    <div class="dcard rev d1"><div class="dphoto"><div class="dav">👨‍⚕️</div><div class="dph-name">Dr. Usman Tariq</div><div class="dbio-overlay"><p class="dbio">Expert in non-surgical aesthetic procedures, facial rejuvenation and advanced injectable techniques. Known for his natural, artful approach to enhancement.</p></div></div><div class="dinfo"><h3 class="dname">Dr. Usman Tariq</h3><div class="drole">Aesthetic Physician</div><div class="dcred">MBBS · MSc Aesthetic Medicine · 9 years exp<br>Injectables, facial harmonisation</div></div></div>
+    <div class="dcard rev d2"><div class="dphoto"><div class="dav">👩‍⚕️</div><div class="dph-name">Dr. Sana Khalid</div><div class="dbio-overlay"><p class="dbio">Dedicated to hair loss treatment, alopecia and scalp conditions with a holistic, evidence-based approach to hair and scalp health.</p></div></div><div class="dinfo"><h3 class="dname">Dr. Sana Khalid</h3><div class="drole">Dermatologist & Trichologist</div><div class="dcred">MBBS · Diploma Trichology · 8 years exp<br>Alopecia, hair regrowth, scalp health</div></div></div>
+    <div class="dcard rev"><div class="dphoto"><div class="dav">👨‍⚕️</div><div class="dph-name">Dr. Bilal Chaudhry</div><div class="dbio-overlay"><p class="dbio">Specialises in medical dermatology with expertise in eczema, psoriasis and chronic inflammatory skin conditions. Committed to compassionate, evidence-based care.</p></div></div><div class="dinfo"><h3 class="dname">Dr. Bilal Chaudhry</h3><div class="drole">Medical Dermatologist</div><div class="dcred">MBBS · MRCP Dermatology · 10 years exp<br>Eczema, psoriasis, inflammatory skin</div></div></div>
+    <div class="dcard rev d1"><div class="dphoto"><div class="dav">👩‍⚕️</div><div class="dph-name">Dr. Hira Mansoor</div><div class="dbio-overlay"><p class="dbio">Expert in anti-ageing medicine and preventative dermatology. Her holistic philosophy combines science with lifestyle coaching for long-term skin health.</p></div></div><div class="dinfo"><h3 class="dname">Dr. Hira Mansoor</h3><div class="drole">Anti-Ageing Specialist</div><div class="dcred">MBBS · MSc Anti-Ageing Medicine · 7 years exp<br>Preventative care, skin longevity</div></div></div>
+    <div class="dcard rev d2"><div class="dphoto"><div class="dav">👨‍⚕️</div><div class="dph-name">Dr. Kamran Ali</div><div class="dbio-overlay"><p class="dbio">Specialist in skincare prescriptions and cosmeceuticals. Designs highly personalised, evidence-based regimens for challenging skin types and conditions.</p></div></div><div class="dinfo"><h3 class="dname">Dr. Kamran Ali</h3><div class="drole">Skincare Specialist</div><div class="dcred">MBBS · PGDip Cosmetic Dermatology · 6 years exp<br>Cosmeceuticals, skincare formulation</div></div></div>
+  </div>
+  <div class="doc-philosophy">
+    <blockquote class="rev">"We believe every patient deserves <em>extraordinary</em> skin care — without compromise."</blockquote>
+    <div class="doc-stats rev d1">
+      <div><div class="ds-n">50+</div><div class="ds-l">Years Combined</div></div>
+      <div><div class="ds-n">6</div><div class="ds-l">Specialists</div></div>
+      <div><div class="ds-n">500+</div><div class="ds-l">Patients</div></div>
+    </div>
+    <div style="margin-top:40px"><a href="#book" class="btn-fill" data-page="book">Book a Consultation</a></div>
+  </div>
+  <footer>
+    <div class="ft-logo">AM <em>Consultation</em></div>
+    <p class="ft-tag">Pakistan's most trusted online dermatology consultancy.</p>
+    <ul class="ft-links"><li><a href="#home" data-page="home">Home</a></li><li><a href="#services" data-page="services">Services</a></li><li><a href="#pricing" data-page="pricing">Pricing</a></li><li><a href="#book" data-page="book">Book</a></li></ul>
+    <p class="ft-copy">© 2026 AM Consultation. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════ PAGE: PRICING ═══════ -->
+<div class="page" id="p-pricing">
+  <div class="page-hero">
+    <div class="eyebrow rev" style="justify-content:center"><div class="eyebrow-line"></div><span>Consultation Fees</span></div>
+    <h1 class="s-title rev d1">Simple, Honest <em>Pricing</em></h1>
+    <p class="s-sub rev d2">All consultations include a detailed written report. No hidden fees — ever.</p>
+  </div>
+  <div class="price-grid" style="padding-top:60px">
+    <div class="pc rev"><div class="pc-tier">Standard</div><div class="pc-price"><sup>PKR</sup>2,500</div><div class="pc-per">per consultation</div><div class="pc-div"></div><ul class="pc-feats"><li>Written consultation report</li><li>Skincare recommendations</li><li>48-hour response time</li><li>1 follow-up message</li><li class="off">Priority doctor access</li><li class="off">Video consultation</li></ul><a href="#book" class="btn-outline" style="width:100%;justify-content:center" data-page="book">Get Started</a></div>
+    <div class="pc feat rev d1"><div class="pc-badge">Most Popular</div><div class="pc-tier">Premium</div><div class="pc-price"><sup>PKR</sup>5,000</div><div class="pc-per">per consultation</div><div class="pc-div"></div><ul class="pc-feats"><li>Detailed consultation report</li><li>Personalised skincare plan</li><li>24-hour response time</li><li>3 follow-up messages</li><li>Priority doctor access</li><li class="off">Video consultation</li></ul><a href="#book" class="btn-fill-light" style="width:100%;justify-content:center;border-radius:40px" data-page="book">Get Started</a></div>
+    <div class="pc rev d2"><div class="pc-tier">Elite</div><div class="pc-price"><sup>PKR</sup>9,000</div><div class="pc-per">per consultation</div><div class="pc-div"></div><ul class="pc-feats"><li>Comprehensive report & plan</li><li>Prescription skincare regimen</li><li>Same-day response</li><li>Unlimited follow-ups (30 days)</li><li>Priority doctor access</li><li>Video consultation included</li></ul><a href="#book" class="btn-outline" style="width:100%;justify-content:center" data-page="book">Get Started</a></div>
+  </div>
+  <div class="sec" style="padding-top:60px;padding-bottom:40px">
+    <div class="eyebrow rev" style="justify-content:center"><div class="eyebrow-line"></div><span>Common Questions</span></div>
+    <h2 class="s-title rev d1">Frequently Asked <em>Questions</em></h2>
+  </div>
+  <div class="faq-grid">
+    <div class="faq-item rev"><div class="faq-q">How quickly will I receive my report?</div><p class="faq-a">Standard plans respond within 48 hours, Premium within 24 hours, Elite the same day — often within a few hours of submission.</p></div>
+    <div class="faq-item rev d1"><div class="faq-q">Can I consult from outside Pakistan?</div><p class="faq-a">Yes. We serve patients across Pakistan, the UAE, the UK and internationally. Prescriptions may vary by location — your doctor will advise accordingly.</p></div>
+    <div class="faq-item rev d1"><div class="faq-q">What happens after my consultation?</div><p class="faq-a">All plans include follow-up messages. Premium includes 3, Elite includes unlimited follow-ups for 30 days from the date of your consultation.</p></div>
+    <div class="faq-item rev d2"><div class="faq-q">Is my information kept private?</div><p class="faq-a">Absolutely. All patient data, photos and medical history are handled with strict confidentiality and are never shared with third parties.</p></div>
+    <div class="faq-item rev d2"><div class="faq-q">What is a video consultation?</div><p class="faq-a">Elite patients receive a live video call with their doctor via WhatsApp or Zoom — ideal for complex cases requiring real-time discussion.</p></div>
+    <div class="faq-item rev d3"><div class="faq-q">How do I pay?</div><p class="faq-a">We accept bank transfer, Easypaisa, JazzCash and international card payments. Payment details are provided after you submit your booking request.</p></div>
+  </div>
+  <footer>
+    <div class="ft-logo">AM <em>Consultation</em></div>
+    <p class="ft-tag">Pakistan's most trusted online dermatology consultancy.</p>
+    <ul class="ft-links"><li><a href="#home" data-page="home">Home</a></li><li><a href="#services" data-page="services">Services</a></li><li><a href="#doctors" data-page="doctors">Doctors</a></li><li><a href="#book" data-page="book">Book</a></li></ul>
+    <p class="ft-copy">© 2026 AM Consultation. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════ PAGE: BOOK ═══════ -->
+<div class="page" id="p-book">
+  <div class="page-hero">
+    <div class="eyebrow rev" style="justify-content:center"><div class="eyebrow-line"></div><span>Get In Touch</span></div>
+    <h1 class="s-title rev d1">Begin Your <em>Skin Journey</em></h1>
+    <p class="s-sub rev d2">Fill in the form and one of our specialists will be in touch within 24 hours to confirm your consultation.</p>
+  </div>
+  <div class="book-layout" style="margin-top:60px">
+    <div class="book-info">
+      <div class="eyebrow"><div class="eyebrow-line"></div><span>Contact Details</span></div>
+      <h2 class="s-title rev" style="text-align:left">We're Here <em>For You</em></h2>
+      <p class="bi-p rev d1">Our team is available 7 days a week. Whether you have a question before booking or need guidance on which plan suits you — we're happy to help.</p>
+      <div class="ci-list rev d2">
+        <div class="ci"><div class="ci-icon">📱</div><div><div class="ci-label">WhatsApp</div><div class="ci-val">+92 300 000 0000</div></div></div>
+        <div class="ci"><div class="ci-icon">✉️</div><div><div class="ci-label">Email</div><div class="ci-val">hello@amconsultation.pk</div></div></div>
+        <div class="ci"><div class="ci-icon">🕐</div><div><div class="ci-label">Response Time</div><div class="ci-val">Within 24 hours, 7 days a week</div></div></div>
+        <div class="ci"><div class="ci-icon">📍</div><div><div class="ci-label">Based In</div><div class="ci-val">Karachi, Pakistan — Serving Worldwide</div></div></div>
+      </div>
+    </div>
+    <div class="bform rev d2">
+      <div class="fr">
+        <div class="fg"><label>First Name</label><input type="text" placeholder="Aisha"></div>
+        <div class="fg"><label>Last Name</label><input type="text" placeholder="Khan"></div>
+      </div>
+      <div class="fg"><label>Email</label><input type="email" placeholder="you@email.com"></div>
+      <div class="fg"><label>WhatsApp</label><input type="tel" placeholder="+92 300 0000000"></div>
+      <div class="fg"><label>Service</label><select><option value="" disabled selected>Select a service</option><option>General Dermatology</option><option>Aesthetic Medicine</option><option>Hair & Scalp</option><option>Anti-Ageing</option><option>Skincare Prescription</option><option>Follow-Up</option></select></div>
+      <div class="fg"><label>Preferred Plan</label><select><option value="" disabled selected>Select a plan</option><option>Standard — PKR 2,500</option><option>Premium — PKR 5,000</option><option>Elite — PKR 9,000</option></select></div>
+      <div class="fg"><label>Your Concern</label><textarea placeholder="Tell us about your skin concern..."></textarea></div>
+      <button class="btn-submit-form" id="contactSubmitBtn">Send Request</button>
+      <p style="font-size:11px;color:var(--muted);margin-top:12px;text-align:center;line-height:1.6">By submitting you agree to our privacy policy. Your information is kept strictly confidential.</p>
+    </div>
+  </div>
+  <footer style="margin-top:60px">
+    <div class="ft-logo">AM <em>Consultation</em></div>
+    <p class="ft-tag">Pakistan's most trusted online dermatology consultancy.</p>
+    <ul class="ft-links"><li><a href="#home" data-page="home">Home</a></li><li><a href="#services" data-page="services">Services</a></li><li><a href="#doctors" data-page="doctors">Doctors</a></li><li><a href="#pricing" data-page="pricing">Pricing</a></li></ul>
+    <p class="ft-copy">© 2026 AM Consultation. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ═══════ PAGE: INTAKE FORM ═══════ -->
+<div class="page" id="p-form">
+  <div class="page-hero">
+    <div class="eyebrow rev" style="justify-content:center"><div class="eyebrow-line"></div><span>AM Consultation</span></div>
+    <h1 class="s-title rev d1">Dermatology &<br><em>Aesthetic Intake</em></h1>
+    <p class="s-sub rev d2">Please complete this form before your consultation. Your information is kept strictly confidential.</p>
+  </div>
+
+  <div class="form-shell">
+    <!-- Progress -->
+    <div class="prog-wrap">
+      <div class="prog-step active" id="fp1"></div>
+      <div class="prog-step" id="fp2"></div>
+      <div class="prog-step" id="fp3"></div>
+      <div class="prog-step" id="fp4"></div>
+      <div class="prog-step" id="fp5"></div>
+      <div class="prog-step" id="fp6"></div>
+    </div>
+    <span class="prog-label" id="fprog-label">Section 1 of 6</span>
+
+    <!-- SECTION 1 -->
+    <div class="fsec active" id="fs1">
+      <div class="fsec-hdr"><div class="fsec-num">Section 01</div><h2>Personal & Contact Info</h2><p>Basic details so we can reach you</p></div>
+      <div class="frow">
+        <div class="fgroup"><label>Full Name <span class="req">*</span></label><input type="text" id="f-name" placeholder="e.g. Aisha Khan"></div>
+        <div class="fgroup"><label>Date of Birth <span class="req">*</span></label><input type="date" id="f-dob"></div>
+      </div>
+      <div class="fgroup"><label>Gender <span class="req">*</span></label>
+        <div class="rpill-group">
+          <label class="rpill"><input type="radio" name="gender">Female</label>
+          <label class="rpill"><input type="radio" name="gender">Male</label>
+          <label class="rpill"><input type="radio" name="gender">Prefer not to say</label>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label>WhatsApp <span class="req">*</span></label><input type="tel" id="f-phone" placeholder="+92 300 0000000"></div>
+        <div class="fgroup"><label>Email <span class="req">*</span></label><input type="email" id="f-email" placeholder="you@email.com"></div>
+      </div>
+      <div class="fgroup"><label>City <span class="req">*</span></label><input type="text" id="f-city" placeholder="e.g. Karachi"></div>
+      <div class="fnav"><div></div><button class="btn-fnav-next" onclick="fGoTo(2)">Continue →</button></div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="fsec" id="fs2">
+      <div class="fsec-hdr"><div class="fsec-num">Section 02</div><h2>Primary Concern</h2><p>Tell us what brought you here today</p></div>
+      <div class="fgroup"><label>Type of Consultation <span class="req">*</span></label>
+        <div class="rpill-group">
+          <label class="rpill"><input type="radio" name="consult">General Dermatology</label>
+          <label class="rpill"><input type="radio" name="consult">Aesthetic Treatment</label>
+          <label class="rpill"><input type="radio" name="consult">Both</label>
+        </div>
+      </div>
+      <div class="fgroup"><label>Describe your main concern <span class="req">*</span></label><textarea id="f-concern" placeholder="Please describe your skin concern in as much detail as possible..."></textarea></div>
+      <div class="fgroup"><label>How long have you had this concern?</label>
+        <select id="f-duration"><option value="" disabled selected>Select duration</option><option>Less than a month</option><option>1 – 3 months</option><option>3 – 6 months</option><option>6 – 12 months</option><option>Over a year</option></select>
+      </div>
+      <div class="fgroup"><label>Area(s) affected</label>
+        <div class="cg">
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Face</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Neck</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Scalp</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Chest / Back</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Arms / Hands</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Legs / Feet</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Multiple areas</span></label>
+        </div>
+      </div>
+      <div class="fgroup"><label>Seen a doctor for this before?</label>
+        <div class="rpill-group">
+          <label class="rpill" data-shows="prev-detail"><input type="radio" name="prev">Yes</label>
+          <label class="rpill"><input type="radio" name="prev">No</label>
+        </div>
+        <div class="cond" id="prev-detail"><label>What treatment did you receive?</label><textarea id="f-prev-treatment" placeholder="Describe previous treatments..."></textarea></div>
+      </div>
+      <div class="fnav"><button class="btn-fnav-back" onclick="fGoTo(1)">← Back</button><button class="btn-fnav-next" onclick="fGoTo(3)">Continue →</button></div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="fsec" id="fs3">
+      <div class="fsec-hdr"><div class="fsec-num">Section 03</div><h2>Medical History & Allergies</h2><p>Important for your doctor to ensure safe treatment</p></div>
+      <div class="fgroup"><label>Known allergies?</label>
+        <div class="rpill-group">
+          <label class="rpill" data-shows="allergy-detail"><input type="radio" name="allergy">Yes</label>
+          <label class="rpill"><input type="radio" name="allergy">No</label>
+        </div>
+        <div class="cond" id="allergy-detail"><label>List your allergies</label><input type="text" id="f-allergies" placeholder="e.g. penicillin, latex, certain foods"></div>
+      </div>
+      <div class="fgroup"><label>Currently taking medications?</label>
+        <div class="rpill-group">
+          <label class="rpill" data-shows="meds-detail"><input type="radio" name="meds">Yes</label>
+          <label class="rpill"><input type="radio" name="meds">No</label>
+        </div>
+        <div class="cond" id="meds-detail"><label>List current medications</label><input type="text" id="f-meds" placeholder="e.g. metformin 500mg, vitamin D"></div>
+      </div>
+      <div class="fgroup"><label>Medical conditions <span class="opt">(select all that apply)</span></label>
+        <div class="cg">
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Diabetes</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">High Blood Pressure</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Thyroid Disorder</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Autoimmune Disease</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Heart Disease</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Asthma</span></label>
+          <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">None</span></label>
+        </div>
+      </div>
+      <div class="fgroup"><label>Pregnant or breastfeeding?</label>
+        <div class="rpill-group">
+          <label class="rpill"><input type="radio" name="preg">Yes</label>
+          <label class="rpill"><input type="radio" name="preg">No</label>
+          <label class="rpill"><input type="radio" name="preg">Not applicable</label>
+        </div>
+      </div>
+      <div class="fgroup"><label>Do you smoke?</label>
+        <div class="rpill-group">
+          <label class="rpill"><input type="radio" name="smoke">Yes</label>
+          <label class="rpill"><input type="radio" name="smoke">No</label>
+          <label class="rpill"><input type="radio" name="smoke">Occasionally</label>
+        </div>
+      </div>
+      <div class="fgroup"><label>Alcohol consumption</label>
+        <div class="rpill-group">
+          <label class="rpill"><input type="radio" name="alcohol">None</label>
+          <label class="rpill"><input type="radio" name="alcohol">Occasional</label>
+          <label class="rpill"><input type="radio" name="alcohol">Regular</label>
+        </div>
+      </div>
+      <div class="fnav"><button class="btn-fnav-back" onclick="fGoTo(2)">← Back</button><button class="btn-fnav-next" onclick="fGoTo(4)">Continue →</button></div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="fsec" id="fs4">
+      <div class="fsec-hdr"><div class="fsec-num">Section 04</div><h2>Aesthetic Treatment History</h2><p>Previous cosmetic or aesthetic procedures</p></div>
+      <div class="fgroup"><label>Had aesthetic treatments before?</label>
+        <div class="rpill-group">
+          <label class="rpill" data-shows="aesth-detail"><input type="radio" name="aesth">Yes</label>
+          <label class="rpill"><input type="radio" name="aesth">No — first time</label>
+        </div>
+        <div class="cond" id="aesth-detail">
+          <label>Which treatments have you had?</label>
+          <div class="cg" style="margin-bottom:14px">
+            <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Botox / Dysport</span></label>
+            <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Dermal Fillers</span></label>
+            <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Chemical Peels</span></label>
+            <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Laser Treatment</span></label>
+            <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Microneedling</span></label>
+            <label class="ci-check"><input type="checkbox"><div class="cb"></div><span class="cl">Thread Lift</span></label>
+          </div>
+          <label>Any reactions or complications?</label>
+          <textarea id="f-aesth-reactions" placeholder="Describe any side effects or reactions..."></textarea>
+          <label style="margin-top:12px">When was your last treatment?</label>
+          <input type="date" id="f-aesth-date">
+        </div>
+      </div>
+      <div class="fnav"><button class="btn-fnav-back" onclick="fGoTo(3)">← Back</button><button class="btn-fnav-next" onclick="fGoTo(5)">Continue →</button></div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="fsec" id="fs5">
+      <div class="fsec-hdr"><div class="fsec-num">Section 05</div><h2>Skincare Routine & Photos</h2><p>Your current routine and images of your concern</p></div>
+      <div class="fgroup"><label>Do you follow a skincare routine?</label>
+        <div class="rpill-group">
+          <label class="rpill" data-shows="routine-detail"><input type="radio" name="routine">Yes</label>
+          <label class="rpill"><input type="radio" name="routine">No</label>
+        </div>
+        <div class="cond" id="routine-detail">
+          <div class="frow" style="gap:12px">
+            <div><label>Morning routine</label><textarea id="f-morning" style="min-height:72px" placeholder="e.g. CeraVe cleanser, niacinamide, SPF 50..."></textarea></div>
+            <div><label>Evening routine</label><textarea id="f-evening" style="min-height:72px" placeholder="e.g. oil cleanser, retinol, moisturiser..."></textarea></div>
+          </div>
+        </div>
+      </div>
+      <div class="fgroup"><label>Do you use SPF daily?</label>
+        <div class="rpill-group">
+          <label class="rpill"><input type="radio" name="spf">Yes, always</label>
+          <label class="rpill"><input type="radio" name="spf">Sometimes</label>
+          <label class="rpill"><input type="radio" name="spf">Rarely / Never</label>
+        </div>
+      </div>
+      <div class="fgroup"><label>Recent reactions to any product?</label>
+        <div class="rpill-group">
+          <label class="rpill" data-shows="react-detail"><input type="radio" name="react">Yes</label>
+          <label class="rpill"><input type="radio" name="react">No</label>
+        </div>
+        <div class="cond" id="react-detail"><input type="text" id="f-reaction" placeholder="Which product and what reaction?"></div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
+      <div class="note">📸 Upload photos in <strong>natural lighting</strong>, without filters or makeup on the affected area. Minimum 2 photos required.</div>
+      <div class="fgroup"><label>Front facing photo <span class="req">*</span></label>
+        <div class="uz" onclick="this.querySelector('input').click()">
+          <input type="file" accept="image/*" onchange="fPreview(this,'fprev1')">
+          <div class="uz-icon">📷</div><h3>Upload front photo</h3><p>JPG or PNG · Max 10MB</p>
+          <div class="prev-wrap" id="fprev1"></div>
+        </div>
+      </div>
+      <div class="fgroup"><label>Close-up of affected area <span class="req">*</span></label>
+        <div class="uz" onclick="this.querySelector('input').click()">
+          <input type="file" accept="image/*" onchange="fPreview(this,'fprev2')">
+          <div class="uz-icon">🔍</div><h3>Upload close-up photo</h3><p>JPG or PNG · Max 10MB</p>
+          <div class="prev-wrap" id="fprev2"></div>
+        </div>
+      </div>
+      <div class="fgroup"><label>Additional photos <span class="opt">optional</span></label>
+        <div class="uz" onclick="this.querySelector('input').click()">
+          <input type="file" accept="image/*" multiple onchange="fPreview(this,'fprev3')">
+          <div class="uz-icon">➕</div><h3>Upload more photos</h3><p>Multiple files allowed</p>
+          <div class="prev-wrap" id="fprev3"></div>
+        </div>
+      </div>
+      <div class="fnav"><button class="btn-fnav-back" onclick="fGoTo(4)">← Back</button><button class="btn-fnav-next" onclick="fGoTo(6)">Continue →</button></div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="fsec" id="fs6">
+      <div class="fsec-hdr"><div class="fsec-num">Section 06</div><h2>Review & Consent</h2><p>Please read and agree before submitting</p></div>
+      <label class="consent-item" id="fc1">
+        <div class="consent-box"></div>
+        <div class="consent-text"><strong>Accuracy of Information</strong>I confirm that all information provided is accurate and complete to the best of my knowledge.</div>
+      </label>
+      <label class="consent-item" id="fc2">
+        <div class="consent-box"></div>
+        <div class="consent-text"><strong>Data & Photo Consent</strong>I consent to my photos, medical history and data being used solely for the purpose of my consultation.</div>
+      </label>
+      <label class="consent-item" id="fc3">
+        <div class="consent-box"></div>
+        <div class="consent-text"><strong>Online Consultation Acknowledgement</strong>I understand this is an online consultation service and not a substitute for emergency medical care.</div>
+      </label>
+      <div class="fnav"><button class="btn-fnav-back" onclick="fGoTo(5)">← Back</button><button class="btn-fsub" onclick="fSubmit()">Submit Consultation ✓</button></div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="fsuccess" id="fsuccess">
+      <div class="succ-icon">🌿</div>
+      <h2>Thank you for submitting!</h2>
+      <p>Your consultation request has been received. Our dermatologist will review your details and photos within 24 hours.</p>
+      <p>As a welcome gift, here is your exclusive voucher:</p>
+      <div class="voucher-box">
+        <div class="v-tag">✦ Exclusive Welcome Voucher</div>
+        <div class="v-amt">PKR 5,000</div>
+        <div class="v-desc">Redeemable at our partnered dermatology clinic</div>
+        <div class="v-code" id="fvoucher-code">DERM-XXXX</div>
+        <div class="v-exp">Valid for 30 days · Present at clinic reception</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:16px">A PDF copy of your intake form is being downloaded to your device.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="ft-logo">AM <em>Consultation</em></div>
+    <p class="ft-tag">Pakistan's most trusted online dermatology consultancy.</p>
+    <ul class="ft-links"><li><a href="#home" data-page="home">Home</a></li><li><a href="#book" data-page="book">Book</a></li><li><a href="#pricing" data-page="pricing">Pricing</a></li></ul>
+    <p class="ft-copy">© 2026 AM Consultation. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+/* ────────────────────────────
+   CURSOR — PERMANENT
+──────────────────────────── */
+const dot=document.getElementById('cur-dot'), ring=document.getElementById('cur-ring');
+let mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px'});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop)})();
+document.querySelectorAll('a,button,.hsc,.scard,.dcard,.pc,.faq-item,.pr,.rpill,.ci-check,.consent-item,.uz').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('ch'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('ch'));
+});
+document.addEventListener('mousedown',()=>document.body.classList.add('cp'));
+document.addEventListener('mouseup',()=>document.body.classList.remove('cp'));
+
+/* ────────────────────────────
+   LOADER
+──────────────────────────── */
+window.addEventListener('load',()=>{setTimeout(()=>document.getElementById('loader').classList.add('gone'),2100)});
+
+/* ────────────────────────────
+   PARTICLES
+──────────────────────────── */
+const canvas=document.getElementById('pcanvas'),ctx=canvas.getContext('2d');
+let W,H,pts=[];
+function rsz(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}rsz();window.addEventListener('resize',rsz);
+for(let i=0;i<60;i++) pts.push({x:Math.random()*9999,y:Math.random()*9999,r:Math.random()*1.6+.3,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,o:Math.random()*.35+.05});
+(function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(196,144,90,${p.o})`;ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0});requestAnimationFrame(draw)})();
+
+/* ────────────────────────────
+   ROUTER
+──────────────────────────── */
+const pages={home:'p-home',services:'p-services',doctors:'p-doctors',pricing:'p-pricing',book:'p-book',form:'p-form'};
+let curPage='home';
+const curtain=document.getElementById('curtain');
+
+function navigate(to){
+  if(to===curPage)return;
+  curtain.className='entering';curtain.style.pointerEvents='all';
+  setTimeout(()=>{
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const nx=document.getElementById(pages[to]);
+    if(nx){nx.classList.add('active');nx.scrollTop=0;}
+    curPage=to;updateNav(to);triggerReveals(nx);
+    curtain.className='leaving';curtain.style.pointerEvents='none';
+    if(to==='home')setTimeout(startCounters,400);
+  },500);
+  setTimeout(()=>{curtain.className=''},1050);
+}
+function updateNav(p){
+  document.querySelectorAll('#nav [data-page]').forEach(a=>a.classList.toggle('active',a.dataset.page===p&&a.tagName==='A'));
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-page]');
+  if(!a)return;
+  const pg=a.dataset.page;
+  if(pg&&pages[pg]){e.preventDefault();navigate(pg);}
+});
+
+/* ────────────────────────────
+   NAV SCROLL
+──────────────────────────── */
+const nav=document.getElementById('nav');
+document.querySelectorAll('.page').forEach(p=>{p.addEventListener('scroll',()=>{if(p.classList.contains('active'))nav.classList.toggle('solid',p.scrollTop>50)},{passive:true})});
+
+/* ────────────────────────────
+   REVEALS
+──────────────────────────── */
+function triggerReveals(container){
+  if(!container)return;
+  const els=container.querySelectorAll('.rev');
+  const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});
+  els.forEach(el=>{el.classList.remove('in');io.observe(el);});
+}
+triggerReveals(document.getElementById('p-home'));
+
+/* ────────────────────────────
+   COUNTERS
+──────────────────────────── */
+function startCounters(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const t=+el.dataset.count,s=t===24?'h':t>=100?'+':'';
+    let c=0;const step=t/60;
+    const tm=setInterval(()=>{c=Math.min(c+step,t);el.textContent=Math.round(c)+s;if(c>=t)clearInterval(tm);},22);
+  });
+}
+setTimeout(startCounters,1900);
+
+/* ────────────────────────────
+   SMOOTH SCROLL
+──────────────────────────── */
+document.querySelectorAll('.page').forEach(page=>{
+  let to=0,cur=0;
+  page.addEventListener('wheel',e=>{
+    e.preventDefault();
+    to=Math.max(0,Math.min(to+e.deltaY,page.scrollHeight-page.clientHeight));
+    (function s(){cur+=(to-cur)*.09;page.scrollTop=cur;if(Math.abs(to-cur)>.5)requestAnimationFrame(s)})();
+  },{passive:false});
+});
+
+/* ────────────────────────────
+   CONTACT FORM SUBMIT
+──────────────────────────── */
+const csb=document.getElementById('contactSubmitBtn');
+if(csb)csb.addEventListener('click',function(){
+  this.textContent='Sending...';
+  setTimeout(()=>{this.textContent='✓ Request Received!';this.style.background='var(--tan-d)';setTimeout(()=>{this.textContent='Send Request';this.style.background='';},3000);},1400);
+});
+
+/* ════════════════════════════
+   INTAKE FORM
+════════════════════════════ */
+let fCur=1;const fTotal=6;
+
+function fGoTo(n){
+  document.getElementById('fs'+fCur).classList.remove('active');
+  for(let i=1;i<=fTotal;i++){
+    const p=document.getElementById('fp'+i);
+    p.className='prog-step'+(i<n?' done':i===n?' active':'');
+  }
+  fCur=n;
+  document.getElementById('fs'+n).classList.add('active');
+  document.getElementById('fprog-label').textContent=`Section ${n} of ${fTotal}`;
+  document.getElementById('p-form').scrollTo({top:0,behavior:'smooth'});
+}
+
+/* Radio pills */
+document.querySelectorAll('.rpill input[type="radio"]').forEach(input=>{
+  input.addEventListener('change',function(){
+    const name=this.name;
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r=>r.closest('.rpill').classList.remove('selected'));
+    this.closest('.rpill').classList.add('selected');
+    const pill=this.closest('.rpill');
+    const cid=pill.dataset.shows;
+    if(cid)document.getElementById(cid).classList.add('show');
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r=>{
+      const p=r.closest('.rpill');
+      if(p!==pill&&p.dataset.shows&&document.getElementById(p.dataset.shows))
+        document.getElementById(p.dataset.shows).classList.remove('show');
+    });
+  });
+});
+
+/* Check items */
+document.querySelectorAll('.ci-check').forEach(item=>{
+  item.addEventListener('click',function(e){
+    e.preventDefault();
+    this.classList.toggle('checked');
+    const cb=this.querySelector('input[type="checkbox"]');
+    if(cb)cb.checked=this.classList.contains('checked');
+  });
+});
+
+/* Consent items */
+document.querySelectorAll('.consent-item').forEach(item=>{
+  item.addEventListener('click',function(e){
+    e.preventDefault();
+    this.classList.toggle('checked');
+    const box=this.querySelector('.consent-box');
+    box.textContent=this.classList.contains('checked')?'✓':'';
+  });
+});
+
+/* Photo preview */
+function fPreview(input,id){
+  const prev=document.getElementById(id);prev.innerHTML='';
+  Array.from(input.files).forEach(file=>{
+    const r=new FileReader();
+    r.onload=e=>{const img=document.createElement('img');img.src=e.target.result;img.className='prev-img';prev.appendChild(img);};
+    r.readAsDataURL(file);
+  });
+}
+
+/* Helpers */
+function fGetRadio(name){
+  const c=document.querySelector(`input[name="${name}"]:checked`);
+  return c?c.closest('.rpill').textContent.trim():'Not answered';
+}
+function fGetChecked(sel){
+  const items=document.querySelectorAll(`${sel} .ci-check.checked .cl`);
+  return items.length?Array.from(items).map(i=>i.textContent.trim()).join(', '):'None selected';
+}
+function fVal(id){const el=document.getElementById(id);return el&&el.value.trim()?el.value.trim():'—';}
+function genCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let v='DERM-';for(let i=0;i<6;i++)v+=c[Math.floor(Math.random()*c.length)];return v;}
+
+/* ── PDF Generator (exact from original) ── */
+function generatePDF(voucherCode){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const pageW=210,margin=20,colW=pageW-margin*2;
+  let y=0;
+  const dark=[44,31,26],rose=[201,130,107],sage=[122,158,142],light=[250,247,244],muted=[138,112,104],white=[255,255,255],border=[226,213,204];
+
+  function newPage(){doc.addPage();y=20;}
+  function checkPage(needed=12){if(y+needed>275)newPage();}
+
+  // Header
+  doc.setFillColor(...dark);doc.rect(0,0,210,42,'F');
+  doc.setFillColor(...rose);doc.rect(0,42,210,3,'F');
+  doc.setTextColor(...white);doc.setFont('helvetica','normal');doc.setFontSize(9);
+  doc.text('AM CONSULTATION',margin,14);
+  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.text('Dermatology & Aesthetic',margin,25);
+  doc.setFont('helvetica','normal');doc.setFontSize(13);doc.text('Medical Intake Form',margin,33);
+  const dateStr=new Date().toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'});
+  doc.setFontSize(8);doc.setTextColor(...rose);doc.text(`Submitted: ${dateStr}`,pageW-margin,14,{align:'right'});
+  doc.setTextColor(200,200,200);doc.text(`Ref: ${voucherCode}`,pageW-margin,20,{align:'right'});
+  y=52;
+
+  function section(title,color=sage){
+    checkPage(16);
+    doc.setFillColor(...color);doc.roundedRect(margin,y,colW,8,1,1,'F');
+    doc.setTextColor(...white);doc.setFont('helvetica','bold');doc.setFontSize(9);
+    doc.text(title.toUpperCase(),margin+4,y+5.5);y+=12;
+  }
+  function row(label,value,highlight=false){
+    const lines=doc.splitTextToSize(String(value),colW-52);
+    const rowH=Math.max(10,lines.length*5+4);
+    checkPage(rowH+2);
+    if(highlight){doc.setFillColor(...light);doc.roundedRect(margin,y,colW,rowH,1,1,'F');}
+    doc.setTextColor(...muted);doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.text(label,margin+3,y+6);
+    doc.setTextColor(...dark);doc.setFontSize(9);doc.text(lines,margin+52,y+6);
+    doc.setDrawColor(...border);doc.line(margin,y+rowH,margin+colW,y+rowH);
+    y+=rowH;
+  }
+
+  section('01 — Personal & Contact Information');
+  row('Full Name',fVal('f-name'),true);row('Date of Birth',fVal('f-dob'));row('Gender',fGetRadio('gender'),true);
+  row('WhatsApp',fVal('f-phone'));row('Email',fVal('f-email'),true);row('City',fVal('f-city'));y+=6;
+
+  section('02 — Primary Concern');
+  row('Consultation Type',fGetRadio('consult'),true);row('Main Concern',fVal('f-concern'));
+  row('Duration',fVal('f-duration'),true);row('Area(s) Affected',fGetChecked('#fs2 .cg'));
+  row('Seen Doctor Before',fGetRadio('prev'),true);
+  if(document.getElementById('prev-detail').classList.contains('show'))row('Previous Treatment',fVal('f-prev-treatment'));
+  y+=6;
+
+  section('03 — Medical History & Allergies',rose);
+  row('Known Allergies',fGetRadio('allergy'),true);
+  if(document.getElementById('allergy-detail').classList.contains('show'))row('Allergy Details',fVal('f-allergies'));
+  row('Current Medications',fGetRadio('meds'),true);
+  if(document.getElementById('meds-detail').classList.contains('show'))row('Medication Details',fVal('f-meds'));
+  row('Medical Conditions',fGetChecked('#fs3 .cg'));row('Pregnant / Breastfeeding',fGetRadio('preg'),true);
+  row('Smoker',fGetRadio('smoke'));row('Alcohol Consumption',fGetRadio('alcohol'),true);y+=6;
+
+  section('04 — Aesthetic Treatment History');
+  row('Prior Aesthetic Treatments',fGetRadio('aesth'),true);
+  if(document.getElementById('aesth-detail').classList.contains('show')){
+    row('Treatments Received',fGetChecked('#aesth-detail .cg'));
+    row('Reactions / Complications',fVal('f-aesth-reactions'),true);
+    row('Last Treatment Date',fVal('f-aesth-date'));
+  }y+=6;
+
+  section('05 — Skincare Routine');
+  row('Follows Skincare Routine',fGetRadio('routine'),true);
+  if(document.getElementById('routine-detail').classList.contains('show')){
+    row('Morning Routine',fVal('f-morning'));row('Evening Routine',fVal('f-evening'),true);
+  }
+  row('Uses SPF Daily',fGetRadio('spf'));row('Recent Product Reactions',fGetRadio('react'),true);
+  if(document.getElementById('react-detail').classList.contains('show'))row('Reaction Details',fVal('f-reaction'));
+  y+=6;
+
+  section('06 — Patient Consent',[90,130,110]);
+  const c1=document.getElementById('fc1').classList.contains('checked');
+  const c2=document.getElementById('fc2').classList.contains('checked');
+  const c3=document.getElementById('fc3').classList.contains('checked');
+  row('Accuracy of Information',c1?'✓ Agreed':'✗ Not agreed',true);
+  row('Data & Photo Consent',c2?'✓ Agreed':'✗ Not agreed');
+  row('Online Consultation Acknowledgement',c3?'✓ Agreed':'✗ Not agreed',true);y+=8;
+
+  // Voucher block
+  checkPage(36);
+  doc.setFillColor(...dark);doc.roundedRect(margin,y,colW,32,3,3,'F');
+  doc.setFillColor(...rose);doc.roundedRect(margin,y,4,32,2,2,'F');
+  doc.setTextColor(...rose);doc.setFont('helvetica','normal');doc.setFontSize(7);
+  doc.text('EXCLUSIVE WELCOME VOUCHER',margin+10,y+8);
+  doc.setTextColor(...white);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text('PKR 5,000',margin+10,y+17);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(200,180,170);
+  doc.text('Redeemable at partnered dermatology clinic',margin+10,y+23);
+  doc.setTextColor(...rose);doc.setFont('helvetica','bold');doc.setFontSize(11);
+  doc.text(voucherCode,pageW-margin-4,y+17,{align:'right'});
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(150,130,120);
+  doc.text('Valid 30 days · Show at reception',pageW-margin-4,y+23,{align:'right'});
+  y+=40;
+
+  // Footer
+  const pc=doc.internal.getNumberOfPages();
+  for(let i=1;i<=pc;i++){
+    doc.setPage(i);doc.setFillColor(...light);doc.rect(0,285,210,12,'F');
+    doc.setTextColor(...muted);doc.setFont('helvetica','normal');doc.setFontSize(7);
+    doc.text('AM Consultation — Confidential Medical Record',margin,291);
+    doc.text(`Page ${i} of ${pc}`,pageW-margin,291,{align:'right'});
+  }
+  return doc;
+}
+
+function fSubmit(){
+  const allChecked=['fc1','fc2','fc3'].every(id=>document.getElementById(id).classList.contains('checked'));
+  if(!allChecked){alert('Please agree to all consent statements before submitting.');return;}
+  const vc=genCode();
+  document.getElementById('fs6').classList.remove('active');
+  document.getElementById('fsuccess').classList.add('show');
+  document.getElementById('fvoucher-code').textContent=vc;
+  document.querySelectorAll('.prog-step').forEach(p=>p.className='prog-step done');
+  document.getElementById('fprog-label').textContent='Submitted ✓';
+  document.getElementById('p-form').scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>{
+    try{
+      const d=generatePDF(vc);
+      const name=document.getElementById('f-name').value.trim().replace(/\s+/g,'_')||'Patient';
+      const dt=new Date().toISOString().slice(0,10);
+      d.save(`AM_Consultation_${name}_${dt}.pdf`);
+    }catch(e){console.error('PDF error:',e);}
+  },600);
+}
+</script>
+</body>
+</html>
